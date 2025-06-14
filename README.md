@@ -15,7 +15,7 @@ Because I was curious and it was something to work on.
 
 ## Installing/Using
 
-You can [access it here](https://kinggizzardthelizardwizard.github.io/TTP-ALCH-Calc/)
+You can [access it here](https://kinggizzardthelizardwizard.github.io/TTP-ALCH-CALC/)
 
 ## License & Copyright
 
