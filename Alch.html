@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pill Crafting Time Calculator</title>
+  <style>
+    body {
+      background-color: #101010;
+      color: #aaa;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #151515;
+      padding: 2rem;
+      border-radius: 8px;
+    }
+    h1 {
+      text-align: center;
+    }
+    label, select, input {
+      display: block;
+      margin: 1rem 0;
+      width: 100%;
+    }
+    select, input {
+      padding: 0.5rem;
+      background-color: #252525;
+      color: #aaa;
+      border: none;
+      border-radius: 4px;
+    }
+    .result {
+      margin-top: 2rem;
+      background-color: #252525;
+      padding: 1rem;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pill Crafting Time Calculator</h1>
+
+    <label for="pill">Select Pill:</label>
+    <select id="pill">
+      <option value="Lesser Qi Pill">Lesser Qi Pill</option>
+      <option value="Medium Qi Pill">Medium Qi Pill</option>
+      <option value="Greater Qi Pill">Greater Qi Pill</option>
+      <option value="Perfect Qi Pill">Perfect Qi Pill</option>
+      <option value="Supreme Qi Pill">Supreme Qi Pill</option>
+      <option value="Heart Calming Pill">Heart Calming Pill</option>
+      <option value="Mind Clarity Pill">Mind Clarity Pill</option>
+      <option value="Rebirth Pill">Rebirth Pill</option>
+      <option value="Body Reconstruction Pill">Body Reconstruction Pill</option>
+      <option value="Body Elevation Pill">Body Elevation Pill</option>
+      <option value="Death Pill">Death Pill</option>
+      <option value="Aging Pill">Aging Pill</option>
+    </select>
+
+    <label for="quantity">How many pills?</label>
+    <input type="number" id="quantity" value="1" min="1">
+
+    <div class="result" id="result">Total grow time will appear here.</div>
+  </div>
+
+  <script>
+    const pillData = {
+      "Lesser Qi Pill": { "Thousand Leaf Dew": 6 },
+      "Medium Qi Pill": { "Thousand Leaf Dew": 8, "Mystic Ginseng Root": 6 },
+      "Greater Qi Pill": { "Thousand Leaf Dew": 10, "Mystic Ginseng Root": 6, "Heavenly Nectar Drops": 4 },
+      "Perfect Qi Pill": { "Thousand Leaf Dew": 14, "Mystic Ginseng Root": 12, "Heavenly Nectar Drops": 8, "Dragon's Blood Resin": 2 },
+      "Supreme Qi Pill": { "Thousand Leaf Dew": 24, "Mystic Ginseng Root": 18, "Heavenly Nectar Drops": 12, "Dragon's Blood Resin": 4 },
+      "Heart Calming Pill": { "Heavenly Sage Fruit": 12, "Elderwood Sprout": 2 },
+      "Mind Clarity Pill": { "Heavenly Dewleaf": 12, "Nightfall Blossom": 14, "Blazing Orchid": 16 },
+      "Rebirth Pill": { "Phoenix Tail Herb": 14, "Dragon's Blood Resin": 12, "Dragon's Whisper Bloom": 18, "Heavenly Dewleaf": 20 },
+      "Body Reconstruction Pill": { "Starpetal": 12, "Moonshadow Fern": 18, "Golden Lotus Root": 18 },
+      "Body Elevation Pill": { "Mystic Sage Leaves": 14, "Moonshadow Fern": 18, "Golden Lotus Root": 18 },
+      "Death Pill": { "Nightshade Root": 16, "Whispering Willow Bark": 12, "Moonshadow Fern": 8 },
+      "Aging Pill": { "Mystic Sage Leaves": 14, "Mystic Ginseng Root": 41 }
+    };
+
+    const growTimes = {
+      "Starpetal": 195,
+      "Elderwood Sprout": 195,
+      "Phoenix Tail Herb": 195,
+      "Dragon's Blood Resin": 195,
+      "Heavenly Dewleaf": 125,
+      "Nightfall Blossom": 125,
+      "Dragon's Whisper Bloom": 125,
+      "Whispering Willow Bark": 95,
+      "Mystic Sage Leaves": 95,
+      "Nightshade Root": 80,
+      "Blazing Orchid": 85,
+      "Heavenly Sage Fruit": 85,
+      "Moonshadow Fern": 85,
+      "Golden Lotus Root": 85,
+      "Spiritwind Grass": 85,
+      "Heavenly Nectar Drops": 77,
+      "Mystic Ginseng Root": 15,
+      "Celestial Blossom": 55,
+      "Thousand Leaf Dew": 12
+    };
+
+    const pillSelect = document.getElementById("pill");
+    const quantityInput = document.getElementById("quantity");
+    const resultDiv = document.getElementById("result");
+
+    function calculateTime() {
+      const pill = pillSelect.value;
+      const quantity = parseInt(quantityInput.value);
+      const ingredients = pillData[pill];
+      let totalSeconds = 0;
+      let ingredientDetails = [];
+
+      for (const [ingredient, count] of Object.entries(ingredients)) {
+        const totalCount = count * quantity;
+        const growTime = growTimes[ingredient] || 0;
+        const timeForThis = growTime * totalCount;
+        totalSeconds += timeForThis;
+        ingredientDetails.push({ name: ingredient, count: totalCount, growTime, timeForThis });
+      }
+
+      ingredientDetails.sort((a, b) => b.growTime - a.growTime);
+
+      let output = `Requirements for ${quantity} ${pill}(s):\n`;
+      ingredientDetails.forEach(ing => {
+        output += `- ${ing.name}: ${ing.count} (Grow Time Each: ${ing.growTime}s, Total: ${ing.timeForThis}s)\n`;
+      });
+
+      output += `\nSuggested Farming Order (longest grow time first):\n`;
+      ingredientDetails.forEach((ing, index) => {
+        output += `${index + 1}. ${ing.name}\n`;
+      });
+
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      output += `\nTotal Grow Time: ${minutes} minutes and ${seconds} seconds.`;
+
+      resultDiv.textContent = output;
+    }
+
+    pillSelect.addEventListener("change", calculateTime);
+    quantityInput.addEventListener("input", calculateTime);
+
+    calculateTime();
+  </script>
+</body>
+</html>
